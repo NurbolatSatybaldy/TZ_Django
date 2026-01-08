@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-dev-secret-key-change-me}
+      - DJANGO_DEBUG=${DJANGO_DEBUG:-True}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      - STRIPE_PUBLISHABLE_KEY_RUB=${STRIPE_PUBLISHABLE_KEY_RUB}
+      - STRIPE_SECRET_KEY_RUB=${STRIPE_SECRET_KEY_RUB}
+      - STRIPE_PUBLISHABLE_KEY_USD=${STRIPE_PUBLISHABLE_KEY_USD}
+      - STRIPE_SECRET_KEY_USD=${STRIPE_SECRET_KEY_USD}
+

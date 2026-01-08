@@ -4,23 +4,18 @@ from pathlib import Path
 
 from decouple import config
 
-# важно: добавь в requirements.txt:
-# dj-database-url
-# psycopg2-binary
 import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# --- Security / env ---
+# Security / env
 SECRET_KEY = config("DJANGO_SECRET_KEY", default="dev-secret-key-change-me")
 
-# ВАЖНО: по умолчанию делаем False (в проде нельзя True)
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
 # ALLOWED_HOSTS
-# ВАЖНО: не ставь "*" по умолчанию в проде
 ALLOWED_HOSTS_STR = config(
     "DJANGO_ALLOWED_HOSTS",
     default=".onrender.com,localhost,127.0.0.1",
@@ -70,7 +65,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# --- Database ---
+# Database
 # Локально: SQLite
 # На Render/в проде: DATABASE_URL (Postgres) приходит из окружения
 DATABASE_URL = config("DATABASE_URL", default="")
@@ -105,8 +100,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# --- Static / WhiteNoise ---
-# ВАЖНО: правильный STATIC_URL должен начинаться с /
+# Static / WhiteNoise
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -122,22 +116,21 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# --- Stripe keys ---
+# Stripe keys
 STRIPE_PUBLISHABLE_KEY_RUB = config("STRIPE_PUBLISHABLE_KEY_RUB", default="")
 STRIPE_SECRET_KEY_RUB = config("STRIPE_SECRET_KEY_RUB", default="")
 STRIPE_PUBLISHABLE_KEY_USD = config("STRIPE_PUBLISHABLE_KEY_USD", default="")
 STRIPE_SECRET_KEY_USD = config("STRIPE_SECRET_KEY_USD", default="")
 
 
-# --- Production hardening (Render behind proxy) ---
+# Production hardening (Render behind proxy)
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-    # Если будет CSRF ошибка на Render/домене — добавь переменную окружения:
-    # CSRF_TRUSTED_ORIGINS=https://<your-service>.onrender.com,https://your-domain.com
+
     CSRF_TRUSTED_ORIGINS_STR = config("CSRF_TRUSTED_ORIGINS", default="")
     if CSRF_TRUSTED_ORIGINS_STR:
         CSRF_TRUSTED_ORIGINS = [

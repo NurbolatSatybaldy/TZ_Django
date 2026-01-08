@@ -92,7 +92,7 @@ class Order(models.Model):
         return sum(item.price for item in self.items.all())
 
     def get_currency(self):
-        """Возвращает валюту заказа (берется из первого товара)"""
+        """Возвращает валюту заказа"""
         first_item = self.items.first()
         return first_item.currency if first_item else "USD"
 

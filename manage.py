@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""Django управляющий скрипт для выполнения административных задач."""
+"""Django управляющий скрипт для выполнения административных задач"""
 import os
 import sys
 
 
 def main():
-    """Запуск административных задач Django."""
+    """Запуск административных задач Django"""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
     try:
         from django.core.management import execute_from_command_line

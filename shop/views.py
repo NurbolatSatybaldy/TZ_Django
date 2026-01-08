@@ -12,7 +12,7 @@ def index(request):
         context = {'items': items}
         return render(request, 'shop/index.html', context)
     except Exception as e:
-        # Логируем ошибку для отладки
+        # Логируем ошибку
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Ошибка на главной странице: {str(e)}")
@@ -87,7 +87,6 @@ def buy_item(request, id):
 
     try:
         # Создаем сессию Stripe Checkout согласно документации
-        # https://docs.stripe.com/payments/accept-a-payment?integration=checkout
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -105,12 +104,10 @@ def buy_item(request, id):
             success_url=request.build_absolute_uri('/success/') + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=request.build_absolute_uri('/cancel/'),
         )
-        
-        # Если запрос через AJAX/fetch, возвращаем JSON
+
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):
             return JsonResponse({'id': session.id, 'url': session.url})
-        
-        # Иначе редиректим напрямую на Checkout (как в документации)
+
         return HttpResponseRedirect(session.url)
         
     except stripe.error.StripeError as e:

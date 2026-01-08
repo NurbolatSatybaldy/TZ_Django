@@ -15,8 +15,6 @@ services:
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        # Подходит для любого *.onrender.com домена.
-        # Если добавишь кастомный домен — допиши его сюда тоже.
         value: ".onrender.com,localhost,127.0.0.1"
       - key: STRIPE_PUBLISHABLE_KEY_USD
         sync: false

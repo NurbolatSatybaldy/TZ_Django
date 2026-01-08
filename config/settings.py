@@ -85,7 +85,12 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# Создаем список директорий только если они существуют
+static_dirs = []
+if os.path.exists(BASE_DIR / "static"):
+    static_dirs.append(BASE_DIR / "static")
+STATICFILES_DIRS = static_dirs
 
 # WhiteNoise для обслуживания статических файлов в production
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

@@ -6,10 +6,15 @@ set +e
 
 echo "=== Начало запуска Django приложения ==="
 
-# Выполняем миграции автоматически
+# Выполняем миграции автоматически (обязательно перед запуском)
 echo "Выполнение миграций..."
 python manage.py migrate --noinput
-echo "Миграции выполнены успешно"
+if [ $? -eq 0 ]; then
+    echo "Миграции выполнены успешно"
+else
+    echo "ОШИБКА: Миграции не выполнены!"
+    exit 1
+fi
 
 # Создаем суперпользователя если его нет (только при первом запуске)
 echo "Проверка суперпользователя..."
@@ -18,16 +23,16 @@ from django.contrib.auth.models import User
 try:
     if not User.objects.filter(is_superuser=True).exists():
         User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-        print('✅ Суперпользователь создан: admin / admin123')
+        print('Суперпользователь создан: admin / admin123')
     else:
-        print('✅ Суперпользователь уже существует')
+        print('Суперпользователь уже существует')
 except Exception as e:
-    print(f'⚠️ Ошибка создания суперпользователя: {e}')
+    print(f'Ошибка создания суперпользователя: {e}')
 "
 
 # Проверяем настройки
 echo "Проверка настроек Django..."
-python manage.py check || echo "⚠️ Предупреждение: проблемы с настройками"
+python manage.py check || echo "Предупреждение: проблемы с настройками"
 
 # Создаем тестовый товар если база пустая
 echo "Проверка товаров в базе..."
@@ -38,9 +43,9 @@ try:
     print(f'Товаров в базе: {count}')
     if count == 0:
         Item.objects.create(name='Тестовый товар', description='Описание', price=100.00, currency='USD')
-        print('✅ Создан тестовый товар')
+        print('Создан тестовый товар')
 except Exception as e:
-    print(f'⚠️ Ошибка проверки товаров: {e}')
+    print(f'Ошибка проверки товаров: {e}')
 "
 
 # Запускаем сервер

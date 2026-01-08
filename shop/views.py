@@ -7,9 +7,17 @@ from .models import Item, Order
 
 def index(request):
     """Главная страница со списком товаров"""
-    items = Item.objects.all()
-    context = {'items': items}
-    return render(request, 'shop/index.html', context)
+    try:
+        items = Item.objects.all()
+        context = {'items': items}
+        return render(request, 'shop/index.html', context)
+    except Exception as e:
+        # Логируем ошибку для отладки
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Ошибка на главной странице: {str(e)}")
+        from django.http import HttpResponse
+        return HttpResponse(f"Ошибка сервера. Проверьте логи. {str(e)}", status=500)
 
 
 def success_page(request):

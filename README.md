@@ -292,3 +292,26 @@ TZ_/
 
 Тестовое задание для отбора кандидатов.
 
+
+
+## Deploy на Render
+
+Проект уже содержит `render.yaml`, `Dockerfile` и `start.sh`, поэтому деплой делается через Render Blueprint:
+
+1. Залей репозиторий в GitHub.
+2. В Render выбери **New → Blueprint** и укажи репозиторий.
+3. При создании Blueprint Render попросит ввести секреты (`sync: false`) — укажи Stripe ключи.
+4. После деплоя приложение будет доступно по `.onrender.com` домену.
+
+Переменные окружения (минимум):
+- `DJANGO_SECRET_KEY` (генерируется автоматически в Blueprint)
+- `DJANGO_DEBUG=False`
+- `DJANGO_ALLOWED_HOSTS` (добавь твой домен + `.onrender.com`)
+- `STRIPE_PUBLISHABLE_KEY_USD`, `STRIPE_SECRET_KEY_USD`
+- `STRIPE_PUBLISHABLE_KEY_RUB`, `STRIPE_SECRET_KEY_RUB`
+
+Примечание: по умолчанию используется SQLite. Для настоящего продакшна лучше подключить Postgres и переключить настройки базы.
+
+В этом репозитории `render.yaml` уже **создаёт Postgres** (ресурс `tz-django-db`) и прокидывает его URL в переменную `DATABASE_URL`. Чтобы Django реально начал использовать Postgres, в `config/settings.py` (или где у тебя `DATABASES`) должно быть чтение `DATABASE_URL` через `dj-database-url`.
+
+⚠️ Важно: **Free Postgres на Render автоматически истекает через 30 дней** (после этого база недоступна, пока не обновишь план). Для учебного/пет-проекта ок; для продакшна — сразу выбирай платный план. 

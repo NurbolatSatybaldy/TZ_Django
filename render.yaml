@@ -1,8 +1,32 @@
 services:
   - type: web
     name: tz-django
-    env: docker
+    runtime: docker
     plan: free
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate && python manage.py runserver 0.0.0.0:$PORT
+    healthCheckPath: /
+    dockerCommand: bash start.sh
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tz-django-db
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        # Подходит для любого *.onrender.com домена.
+        # Если добавишь кастомный домен — допиши его сюда тоже.
+        value: ".onrender.com,localhost,127.0.0.1"
+      - key: STRIPE_PUBLISHABLE_KEY_USD
+        sync: false
+      - key: STRIPE_SECRET_KEY_USD
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY_RUB
+        sync: false
+      - key: STRIPE_SECRET_KEY_RUB
+        sync: false
 
+databases:
+  - name: tz-django-db
+    plan: free

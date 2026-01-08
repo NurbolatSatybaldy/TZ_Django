@@ -9,8 +9,13 @@ SECRET_KEY = config("DJANGO_SECRET_KEY", default="dev-secret-key-change-me")
 
 DEBUG = config("DJANGO_DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS_STR = config("DJANGO_ALLOWED_HOSTS", default="localhost,127.0.0.1")
-ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS_STR.split(",") if h.strip()]
+# ALLOWED_HOSTS настройка
+ALLOWED_HOSTS_STR = config("DJANGO_ALLOWED_HOSTS", default="")
+if ALLOWED_HOSTS_STR:
+    ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS_STR.split(",") if h.strip()]
+else:
+    # По умолчанию разрешаем все хосты для упрощения деплоя
+    ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -103,14 +108,10 @@ STRIPE_SECRET_KEY_RUB = config("STRIPE_SECRET_KEY_RUB", default="")
 STRIPE_PUBLISHABLE_KEY_USD = config("STRIPE_PUBLISHABLE_KEY_USD", default="")
 STRIPE_SECRET_KEY_USD = config("STRIPE_SECRET_KEY_USD", default="")
 
-# Для production: автоматическое определение домена
+# Для production: если DEBUG=False, используем более строгие настройки
 if not DEBUG:
-    ALLOWED_HOSTS_PROD = config("DJANGO_ALLOWED_HOSTS", default="")
-    if ALLOWED_HOSTS_PROD:
-        ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS_PROD.split(",") if h.strip()]
-    else:
-        # Если не указано, разрешаем все хосты (для Render.com)
-        ALLOWED_HOSTS = ["*"]
+    # В production лучше указать конкретный домен, но для тестирования оставляем *
+    pass
 
 
 
